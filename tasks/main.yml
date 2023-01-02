@@ -1,0 +1,44 @@
+---
+# tasks file for ansible-role-datadisk-simple
+- name: Create partitions
+  community.general.parted:
+    device: "{{ item.device }}"
+    label: "{{ item.label | default('gpt') }}"
+    align: "{{ item.align | default('optimal') }}"
+    number: "{{ item.number | default(1) }}"
+    part_end: "{{ item.part_end | default('100%') }}"
+    part_start: "{{ item.part_start | default('0%') }}"
+    part_type: "{{ item.part_type | default('primary') }}"
+    resize: "{{ item.resize | default(false) }}"
+    state: present
+  register: create_partitions_result
+  loop: "{{ datadisks_simple }}"
+
+- name: Create filesystems
+  community.general.filesystem:
+    fstype: "{{ item.fstype | default('ext4') }}"
+    dev: "{{ item.device }}{{ item.number | default('1') }}"
+    resizefs: "{{ item.resizefs | default(false) }}"
+    state: present
+  register: create_filesystems_result
+  loop: "{{ datadisks_simple }}"
+
+- name: Mount filesystems
+  ansible.posix.mount:
+    path: "{{ item.path }}"
+    src: "{{ item.device }}{{ item.number | default('1') }}"
+    fstype: "{{ item.fstype | default('ext4') }}"
+    opts: "{{ item.opts | default(omit) }}"
+    state: mounted
+  loop: "{{ datadisks_simple }}"
+  when: datadisks_simple_mount_by_uuid == false
+
+- name: Mount filesystems by uuid
+  ansible.posix.mount:
+    path: "{{ item.path }}"
+    src: "{{ item.by_uuid }}"
+    fstype: "{{ item.fstype | default('ext4') }}"
+    opts: "{{ item.opts | default(omit) }}"
+    state: mounted
+  loop: "{{ datadisks_simple }}"
+  when: datadisks_simple_mount_by_uuid == true
