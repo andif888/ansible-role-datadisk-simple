@@ -19,40 +19,37 @@ Partition, format and mount simple datadisk
 
 Define your datadisks.
 
-Example:
-
-```yaml
-
-datadisks_simple:
-
-- device: /dev/sdb
-  by_uuid: "/dev/disk/by-uuid/db068db6-7d70-4195-b75d-c435855a4b6f"
-  label: "gpt"
-  align: "optimal"
-  number: 1
-  part_end: "100%"
-  part_start: "0%"
-  part_type: "primary"
-  resize: false
-  fstype: ext4
-  resizefs: false
-  path: /mnt/filer/speed
-  opts: discard,noatime
-- device: /dev/sdc
-  path: /mnt/filer/data
-  opts: discard,noatime
-- device: /dev/sdd
-  path: /mnt/filer/backup
-  opts: discard,noatime
-- device: /dev/sde
-  path: /mnt/filer/cams
-  opts: discard,noatime
-```
-
 #### Default value
 
 ```YAML
 datadisks_simple: []
+```
+
+#### Example usage
+
+```YAML
+datadisks_simple:
+  - device: /dev/sdb
+    by_uuid: "/dev/disk/by-uuid/db068db6-7d70-4195-b75d-c435855a4b6f"
+    align: "optimal"
+    number: 1
+    part_end: "100%"
+    part_start: "0%"
+    part_type: "primary"
+    resize: false
+    fstype: ext4
+    resizefs: false
+    path: /mnt/filer/speed
+    opts: discard,noatime
+  - device: /dev/sdc
+    path: /mnt/filer/data
+    opts: discard,noatime
+  - device: /dev/sdd
+    path: /mnt/filer/backup
+    opts: discard,noatime
+  - device: /dev/sde
+    path: /mnt/filer/cams
+    opts: discard,noatime
 ```
 
 ### datadisks_simple_mount_by_uuid
